@@ -1,9 +1,9 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { FiBook, FiAward } from "react-icons/fi";
 import { HiAcademicCap } from "react-icons/hi";
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 40 },
   visible: (i: number) => ({
     opacity: 1,

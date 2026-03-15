@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { FiAward, FiExternalLink } from "react-icons/fi";
 
 const achievements = [
@@ -33,7 +33,7 @@ const achievements = [
   },
 ];
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, scale: 0.9 },
   visible: (i: number) => ({
     opacity: 1,
