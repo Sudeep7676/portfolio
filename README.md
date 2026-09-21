@@ -158,6 +158,54 @@ src/
 
 Full WCAG conformance still needs manual testing with assistive technology.
 
+## Theming
+
+Light and dark are both first-class. The switch lives in the navbar.
+
+- Every colour comes from CSS variables in `globals.css`. `:root` holds the light
+  values and `.dark` overrides them, so components do not need `dark:` variants
+  for ordinary text and surfaces.
+- Tailwind's `ink-*`, `pearl-*` and `surface` colours read those variables with
+  `<alpha-value>`, which is why opacity modifiers like `bg-surface/70` still work.
+- `darkMode: "class"` in `tailwind.config.ts`; the class is applied by a small
+  blocking script in `layout.tsx` **before first paint**, so there is no flash.
+- Preference order: saved choice in `localStorage` (`sv:theme`) → OS setting.
+  While no explicit choice is saved, the page follows the OS live.
+- Measured contrast against the page background: light 5.2–16.8:1,
+  dark 6.9–16.7:1.
+
+Things that must stay dark in both themes — modal scrims, the certificate
+"view" pill, dialog close buttons — deliberately use fixed `slate-*` values
+rather than the invertible `ink-*` ramp.
+
+## Contact form
+
+The form posts to `src/app/api/contact/route.ts`, which sends through
+[Resend](https://resend.com).
+
+```bash
+cp .env.example .env.local    # then add your key
+```
+
+| Variable | Required | Purpose |
+| -------- | -------- | ------- |
+| `RESEND_API_KEY` | yes | Without it the route returns 503 |
+| `CONTACT_TO` | no | Defaults to the address in `portfolio.ts` |
+| `CONTACT_FROM` | no | Must be a Resend-verified sender |
+
+Add the same variables in Vercel under **Project Settings → Environment
+Variables**, then redeploy.
+
+Behaviour is deliberately honest:
+
+- **2xx** → "Message sent"
+- **422** → field errors rendered inline
+- **503** (no API key) → falls back to opening the visitor's mail client and
+  says so
+- **502 / network error** → reports the failure and offers a direct mailto
+
+"Message sent" is never shown unless the API confirmed delivery.
+
 ## Notes
 
 - **Contact form has no backend.** It validates, then opens the visitor's own
